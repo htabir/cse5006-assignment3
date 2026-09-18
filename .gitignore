@@ -1,0 +1,25 @@
+# dependencies
+node_modules/
+
+# environment / secrets — .env.example is the ONLY env file that is committed
+.env
+.env.*
+!.env.example
+
+# build output
+client/dist/
+server/dist/
+dist/
+build/
+
+# tests
+coverage/
+
+# submission artefacts
+*.zip
+
+# OS / editor
+.DS_Store
+*.log
+.vscode/
+.idea/
