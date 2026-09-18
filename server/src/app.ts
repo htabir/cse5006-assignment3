@@ -4,6 +4,7 @@ import { config } from './config';
 import { apiNotFound, errorHandler } from './middleware/errorHandler';
 import { requestLogger } from './middleware/requestLogger';
 import { authApiRouter, oauthRouter } from './routes/auth';
+import { capsulesRouter } from './routes/capsules';
 import { healthRouter } from './routes/health';
 
 export function createApp() {
@@ -20,6 +21,7 @@ export function createApp() {
   app.use('/api/health', healthRouter);
   app.use('/auth', oauthRouter);
   app.use('/api/auth', authApiRouter);
+  app.use('/api/capsules', capsulesRouter);
 
   app.use('/api', apiNotFound);
   app.use(errorHandler);

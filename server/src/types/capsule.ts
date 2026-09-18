@@ -15,6 +15,3 @@ export interface Capsule {
   notes: string | null;
   created_at: string;
 }
-
-// What a client may send: everything except the server-controlled columns.
-export type CapsuleInput = Omit<Capsule, 'id' | 'user_id' | 'created_at'>;
