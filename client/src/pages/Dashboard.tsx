@@ -1,6 +1,7 @@
 // Assignment §5/§7: "/dashboard" is protected and lists only the authenticated user's records
 // (GET /api/capsules).
 import { CapsuleCard } from '@/components/capsules/CapsuleCard';
+import { CreateCapsuleDialog } from '@/components/capsules/CreateCapsuleDialog';
 import { EmptyState } from '@/components/capsules/EmptyState';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
@@ -8,7 +9,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useCapsules } from '@/hooks/useCapsules';
 
 export function Dashboard() {
-  const { capsules, loading, error, reload } = useCapsules();
+  const { capsules, loading, error, reload, add } = useCapsules();
 
   return (
     <div className="space-y-6">
@@ -21,6 +22,7 @@ export function Dashboard() {
             </p>
           )}
         </div>
+        <CreateCapsuleDialog onCreated={add} />
       </div>
 
       {loading ? (
@@ -40,7 +42,7 @@ export function Dashboard() {
           </AlertDescription>
         </Alert>
       ) : capsules.length === 0 ? (
-        <EmptyState />
+        <EmptyState action={<CreateCapsuleDialog onCreated={add} />} />
       ) : (
         <div className="grid gap-4 sm:grid-cols-2">
           {capsules.map((c) => (

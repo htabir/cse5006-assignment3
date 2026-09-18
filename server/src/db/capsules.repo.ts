@@ -7,19 +7,22 @@ import { query } from './pool';
 const COLUMNS =
   'project_name, prompt_title, prompt_version, prompt_text, response_summary, category, usefulness, reviewed, improved, screenshot_url, notes';
 
+// Blank optional text from the form is stored as NULL, not ''.
+const textOrNull = (v: string | null | undefined) => (v && v.trim() ? v : null);
+
 function values(input: CapsuleInput) {
   return [
     input.project_name,
     input.prompt_title,
-    input.prompt_version ?? null,
+    textOrNull(input.prompt_version),
     input.prompt_text,
-    input.response_summary ?? null,
-    input.category ?? null,
-    input.usefulness ?? null,
+    textOrNull(input.response_summary),
+    textOrNull(input.category),
+    textOrNull(input.usefulness),
     input.reviewed,
     input.improved,
-    input.screenshot_url || null,
-    input.notes ?? null,
+    textOrNull(input.screenshot_url),
+    textOrNull(input.notes),
   ];
 }
 
