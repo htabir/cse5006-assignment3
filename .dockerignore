@@ -1,0 +1,13 @@
+.git
+node_modules
+**/node_modules
+**/dist
+.env*
+!.env.example
+*.zip
+*.pdf
+*.txt
+*.md
+!README.md
+docs
+readme-assets

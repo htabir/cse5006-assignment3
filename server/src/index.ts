@@ -1,8 +1,9 @@
 import { createApp } from './app';
-import { config } from './config';
+import { config, describeEnvironment } from './config';
 import { initDb } from './db/init';
 
 async function main() {
+  console.log(`Environment: ${describeEnvironment()}`);
   await initDb();
   console.log('Database ready');
 
