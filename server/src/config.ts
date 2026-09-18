@@ -13,7 +13,6 @@ const isProd = nodeEnv === 'production';
 
 // Required variables must exist in production (fail fast on Render); in development a
 // missing value is tolerated so the server can start before every feature is configured.
-// eslint-disable-next-line @typescript-eslint/no-unused-vars -- used by fields added in later commits
 function required(name: string): string {
   const value = env[name];
   if (!value && isProd) throw new Error(`Missing required environment variable: ${name}`);
@@ -25,6 +24,7 @@ export const config = {
   isProd,
   port: Number(env.PORT ?? 4000),
   appUrl: env.APP_URL ?? 'http://localhost:5173',
+  databaseUrl: required('DATABASE_URL'),
   // Lifetime of the login session — used for both the JWT expiry and the cookie maxAge.
   sessionTtlSeconds: 7 * 24 * 60 * 60,
 } as const;
