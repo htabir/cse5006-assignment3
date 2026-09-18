@@ -3,6 +3,7 @@ import express from 'express';
 import { config } from './config';
 import { apiNotFound, errorHandler } from './middleware/errorHandler';
 import { requestLogger } from './middleware/requestLogger';
+import { authApiRouter, oauthRouter } from './routes/auth';
 import { healthRouter } from './routes/health';
 
 export function createApp() {
@@ -17,6 +18,8 @@ export function createApp() {
   app.use(cookieParser());
 
   app.use('/api/health', healthRouter);
+  app.use('/auth', oauthRouter);
+  app.use('/api/auth', authApiRouter);
 
   app.use('/api', apiNotFound);
   app.use(errorHandler);

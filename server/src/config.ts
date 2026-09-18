@@ -33,6 +33,9 @@ export const config = {
   appUrl: env.APP_URL ?? 'http://localhost:5173',
   databaseUrl: required('DATABASE_URL'),
   jwtSecret: requiredSecret('JWT_SECRET'),
+  githubClientId: required('GITHUB_CLIENT_ID'),
+  githubClientSecret: required('GITHUB_CLIENT_SECRET'),
+  githubCallbackUrl: required('GITHUB_CALLBACK_URL'),
   // Lifetime of the login session — used for both the JWT expiry and the cookie maxAge.
   sessionTtlSeconds: 7 * 24 * 60 * 60,
 } as const;
