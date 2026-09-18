@@ -2,6 +2,7 @@
 // (GET /api/capsules).
 import { CapsuleCard } from '@/components/capsules/CapsuleCard';
 import { CreateCapsuleDialog } from '@/components/capsules/CreateCapsuleDialog';
+import { DeleteCapsuleDialog } from '@/components/capsules/DeleteCapsuleDialog';
 import { EditCapsuleDialog } from '@/components/capsules/EditCapsuleDialog';
 import { EmptyState } from '@/components/capsules/EmptyState';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -10,7 +11,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useCapsules } from '@/hooks/useCapsules';
 
 export function Dashboard() {
-  const { capsules, loading, error, reload, add, replace } = useCapsules();
+  const { capsules, loading, error, reload, add, replace, remove } = useCapsules();
 
   return (
     <div className="space-y-6">
@@ -50,7 +51,12 @@ export function Dashboard() {
             <CapsuleCard
               key={c.id}
               capsule={c}
-              actions={<EditCapsuleDialog capsule={c} onUpdated={replace} onMissing={reload} />}
+              actions={
+                <>
+                  <EditCapsuleDialog capsule={c} onUpdated={replace} onMissing={reload} />
+                  <DeleteCapsuleDialog capsule={c} onDeleted={remove} onMissing={reload} />
+                </>
+              }
             />
           ))}
         </div>
