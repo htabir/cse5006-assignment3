@@ -19,12 +19,20 @@ function required(name: string): string {
   return value ?? '';
 }
 
+// Secrets must also be long enough to be worth anything.
+function requiredSecret(name: string): string {
+  const value = required(name);
+  if (value && value.length < 32) throw new Error(`${name} must be at least 32 characters`);
+  return value;
+}
+
 export const config = {
   nodeEnv,
   isProd,
   port: Number(env.PORT ?? 4000),
   appUrl: env.APP_URL ?? 'http://localhost:5173',
   databaseUrl: required('DATABASE_URL'),
+  jwtSecret: requiredSecret('JWT_SECRET'),
   // Lifetime of the login session — used for both the JWT expiry and the cookie maxAge.
   sessionTtlSeconds: 7 * 24 * 60 * 60,
 } as const;
