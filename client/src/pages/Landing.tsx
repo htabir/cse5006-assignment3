@@ -2,6 +2,7 @@
 import { BookMarked, CheckCircle2, Image } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { GitHubSignInButton } from '@/components/auth/GitHubSignInButton';
+import { LogoMark } from '@/components/brand/Logo';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
@@ -27,6 +28,7 @@ export function Landing() {
   return (
     <div className="space-y-12">
       <section className="space-y-4 text-center">
+        <LogoMark className="mx-auto size-16" />
         <h1 className="text-4xl font-semibold tracking-tight">Your private AI prompt library</h1>
         <p className="text-muted-foreground mx-auto max-w-2xl">
           AI Capsule keeps the prompts you use with ChatGPT, Copilot, Gemini and Claude in one

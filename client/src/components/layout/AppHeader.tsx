@@ -1,6 +1,7 @@
 import { LogOut } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { GitHubSignInButton } from '@/components/auth/GitHubSignInButton';
+import { LogoMark } from '@/components/brand/Logo';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -25,7 +26,8 @@ export function AppHeader() {
   return (
     <header className="border-b">
       <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-3">
-        <Link to="/" className="text-lg font-semibold tracking-tight">
+        <Link to="/" className="flex items-center gap-2 text-lg font-semibold tracking-tight">
+          <LogoMark className="size-7" />
           AI Capsule
         </Link>
         <nav className="flex items-center gap-4 text-sm">

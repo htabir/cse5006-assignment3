@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 64" width="320" height="64" role="img" aria-label="AI Capsule">
   <defs>
     <clipPath id="c"><rect x="6" y="19" width="52" height="26" rx="13"/></clipPath>
   </defs>
@@ -7,4 +7,5 @@
     <rect x="6" y="19" width="24" height="26" fill="#6366f1"/>
   </g>
   <path fill="#ffffff" d="M43 24l2.2 5.8L51 32l-5.8 2.2L43 40l-2.2-5.8L35 32l5.8-2.2z"/>
+  <text x="74" y="41" font-family="Geist Variable, Inter, -apple-system, Segoe UI, Helvetica, Arial, sans-serif" font-size="30" font-weight="600" letter-spacing="-0.5" fill="#171717">AI Capsule</text>
 </svg>
