@@ -15,6 +15,9 @@ export function buildAuthorizeUrl(state: string): string {
     redirect_uri: config.githubCallbackUrl,
     scope: 'read:user',
     state,
+    // Always show GitHub's account picker, so a user who logged out can choose a different account
+    // instead of being silently signed back in with the one GitHub remembers.
+    prompt: 'select_account',
   });
   return `https://github.com/login/oauth/authorize?${params.toString()}`;
 }
