@@ -5,11 +5,11 @@ services:
     restart: unless-stopped
     # Production values live in /opt/ai-capsule/.env on the VPS (never committed).
     env_file: .env
-    # Host networking: the app listens on 0.0.0.0:4000 on the VPS itself, so it reaches the
-    # VPS's own PostgreSQL on localhost:5432 and nginx proxies to 127.0.0.1:4000.
+    # Host networking: the app listens on 0.0.0.0:$PORT on the VPS itself, so it reaches the
+    # VPS's own PostgreSQL on localhost:5432 and nginx proxies to 127.0.0.1:$PORT.
     network_mode: host
     healthcheck:
-      test: ['CMD', 'wget', '-qO-', 'http://127.0.0.1:4000/api/health']
+      test: ['CMD-SHELL', 'wget -qO- http://127.0.0.1:${PORT:-4000}/api/health || exit 1']
       interval: 30s
       timeout: 5s
       retries: 3
