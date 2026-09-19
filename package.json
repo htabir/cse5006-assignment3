@@ -2,7 +2,7 @@
   "name": "ai-capsule",
   "version": "1.0.0",
   "private": true,
-  "description": "AI Capsule — a private AI prompt library (CSE5006 Assignment 3)",
+  "description": "AI Capsule \u2014 a private AI prompt library (CSE5006 Assignment 3)",
   "workspaces": [
     "client",
     "server"
@@ -17,8 +17,7 @@
     "typecheck": "npm run typecheck -w client && npm run typecheck -w server",
     "lint": "npm run lint -w client && npm run lint -w server",
     "format": "prettier --write .",
-    "format:check": "prettier --check .",
-    "package": "bash scripts/package.sh"
+    "format:check": "prettier --check ."
   },
   "devDependencies": {
     "concurrently": "^9.2.1",
