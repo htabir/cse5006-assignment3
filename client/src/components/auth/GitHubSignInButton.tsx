@@ -8,13 +8,26 @@ function GitHubMark() {
   );
 }
 
+interface Props {
+  className?: string;
+  /** Short label on small screens (used in the header, where space is tight). */
+  compact?: boolean;
+}
+
 // A full-page navigation (not fetch): GitHub's consent screen is a redirect flow.
-export function GitHubSignInButton({ className }: { className?: string }) {
+export function GitHubSignInButton({ className, compact = false }: Props) {
   return (
     <Button asChild size="lg" className={className}>
       <a href="/auth/github">
         <GitHubMark />
-        Sign in with GitHub
+        {compact ? (
+          <>
+            <span className="sm:hidden">Sign in</span>
+            <span className="hidden sm:inline">Sign in with GitHub</span>
+          </>
+        ) : (
+          'Sign in with GitHub'
+        )}
       </a>
     </Button>
   );

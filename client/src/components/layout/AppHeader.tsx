@@ -30,7 +30,7 @@ export function AppHeader() {
           <LogoMark className="size-7" />
           AI Capsule
         </Link>
-        <nav className="flex items-center gap-4 text-sm">
+        <nav className="flex items-center gap-3 text-sm sm:gap-4">
           <Link to="/dashboard" className="text-muted-foreground hover:text-foreground">
             Dashboard
           </Link>
@@ -55,7 +55,7 @@ export function AppHeader() {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            status === 'anonymous' && <GitHubSignInButton className="h-8 px-3 text-sm" />
+            status === 'anonymous' && <GitHubSignInButton compact className="h-8 px-3 text-sm" />
           )}
         </nav>
       </div>
