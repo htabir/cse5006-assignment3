@@ -1,6 +1,4 @@
-// Client-side search and filtering over the records already loaded from GET /api/capsules.
-import type { Capsule } from '@/types/capsule';
-
+// Filter state for the dashboard. Filtering itself happens on the server (GET /api/capsules?…).
 export type StatusFilter = 'all' | 'reviewed' | 'unreviewed' | 'improved' | 'unimproved';
 
 export interface CapsuleFilters {
@@ -23,33 +21,17 @@ export function isFiltering(f: CapsuleFilters): boolean {
   );
 }
 
-const SEARCHED_FIELDS: (keyof Capsule)[] = [
-  'prompt_title',
-  'project_name',
-  'prompt_text',
-  'response_summary',
-  'notes',
-  'prompt_version',
-];
-
-export function filterCapsules(capsules: Capsule[], f: CapsuleFilters): Capsule[] {
-  const q = f.query.trim().toLowerCase();
-  return capsules.filter((c) => {
-    if (f.category !== 'all' && c.category !== f.category) return false;
-    if (f.usefulness !== 'all' && c.usefulness !== f.usefulness) return false;
-    if (f.status === 'reviewed' && !c.reviewed) return false;
-    if (f.status === 'unreviewed' && c.reviewed) return false;
-    if (f.status === 'improved' && !c.improved) return false;
-    if (f.status === 'unimproved' && c.improved) return false;
-    if (
-      q &&
-      !SEARCHED_FIELDS.some((k) =>
-        String(c[k] ?? '')
-          .toLowerCase()
-          .includes(q),
-      )
-    )
-      return false;
-    return true;
-  });
+// Translate the UI state into the API's query parameters.
+export function toQueryString(f: CapsuleFilters): string {
+  const params = new URLSearchParams();
+  const q = f.query.trim();
+  if (q) params.set('q', q);
+  if (f.category !== 'all') params.set('category', f.category);
+  if (f.usefulness !== 'all') params.set('usefulness', f.usefulness);
+  if (f.status === 'reviewed') params.set('reviewed', 'true');
+  if (f.status === 'unreviewed') params.set('reviewed', 'false');
+  if (f.status === 'improved') params.set('improved', 'true');
+  if (f.status === 'unimproved') params.set('improved', 'false');
+  const s = params.toString();
+  return s ? `?${s}` : '';
 }

@@ -15,3 +15,14 @@ export interface Capsule {
   notes: string | null;
   created_at: string;
 }
+
+// Aggregates for the dashboard overview, computed in SQL for the authenticated user.
+export interface CapsuleStats {
+  total: number;
+  reviewed: number;
+  improved: number;
+  good: number;
+  needs_improvement: number;
+  by_category: { label: string; count: number }[];
+  by_week: { week_start: string; count: number }[];
+}

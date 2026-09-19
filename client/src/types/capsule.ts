@@ -20,3 +20,14 @@ export type CapsuleInput = Omit<Capsule, 'id' | 'user_id' | 'created_at'>;
 
 export const CATEGORIES = ['Coding', 'Writing', 'Research', 'Debugging', 'Study', 'Other'] as const;
 export const USEFULNESS = ['Good', 'Needs Improvement'] as const;
+
+// Aggregates from GET /api/capsules/stats (mirrors server/src/types/capsule.ts).
+export interface CapsuleStats {
+  total: number;
+  reviewed: number;
+  improved: number;
+  good: number;
+  needs_improvement: number;
+  by_category: { label: string; count: number }[];
+  by_week: { week_start: string; count: number }[];
+}

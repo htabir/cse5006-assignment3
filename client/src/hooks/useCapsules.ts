@@ -2,47 +2,35 @@ import { useCallback, useEffect, useState } from 'react';
 import { listCapsules } from '@/lib/capsules';
 import type { Capsule } from '@/types/capsule';
 
-export function useCapsules() {
+// Loads the caller's capsules from the server for the given query string; refetches when it changes.
+export function useCapsules(queryString: string) {
   const [capsules, setCapsules] = useState<Capsule[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  // State updates happen in promise callbacks (never synchronously in the mount effect).
-  const load = useCallback(
-    () =>
-      listCapsules()
-        .then((data) => {
-          setCapsules(data);
-          setError(null);
-        })
-        .catch((err: unknown) => {
-          setError(err instanceof Error ? err.message : 'Failed to load capsules');
-        })
-        .finally(() => setLoading(false)),
-    [],
-  );
+  const [version, setVersion] = useState(0);
 
   useEffect(() => {
-    void load();
-  }, [load]);
+    let cancelled = false;
+    listCapsules(queryString)
+      .then((data) => {
+        if (cancelled) return;
+        setCapsules(data);
+        setError(null);
+      })
+      .catch((err: unknown) => {
+        if (!cancelled) setError(err instanceof Error ? err.message : 'Failed to load capsules');
+      })
+      .finally(() => !cancelled && setLoading(false));
+    return () => {
+      cancelled = true;
+    };
+  }, [queryString, version]);
 
-  // Manual retry from the UI.
+  // Re-run the current query (after create/update/delete, or a manual retry).
   const reload = useCallback(() => {
     setLoading(true);
-    return load();
-  }, [load]);
+    setVersion((v) => v + 1);
+  }, []);
 
-  // Local list updates after a successful create/update/delete, so the UI reflects the API result
-  // without a second round-trip.
-  const add = useCallback((c: Capsule) => setCapsules((list) => [c, ...list]), []);
-  const replace = useCallback(
-    (c: Capsule) => setCapsules((list) => list.map((x) => (x.id === c.id ? c : x))),
-    [],
-  );
-  const remove = useCallback(
-    (id: number) => setCapsules((list) => list.filter((x) => x.id !== id)),
-    [],
-  );
-
-  return { capsules, loading, error, reload, add, replace, remove };
+  return { capsules, loading, error, reload };
 }

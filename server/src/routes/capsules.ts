@@ -1,8 +1,14 @@
 // Assignment §5/§9: the four required CRUD routes, all behind JWT middleware.
 import { Router } from 'express';
-import { createForUser, deleteOwned, listByUser, updateOwned } from '../db/capsules.repo';
+import {
+  createForUser,
+  deleteOwned,
+  listByUser,
+  statsByUser,
+  updateOwned,
+} from '../db/capsules.repo';
 import { getAuthenticatedUser, requireAuth } from '../middleware/requireAuth';
-import { capsuleInputSchema, idParamSchema } from '../schemas/capsule';
+import { capsuleInputSchema, idParamSchema, listQuerySchema } from '../schemas/capsule';
 
 export const capsulesRouter = Router();
 
@@ -11,7 +17,18 @@ capsulesRouter.use(requireAuth);
 
 capsulesRouter.get('/', async (req, res) => {
   const user = getAuthenticatedUser(req);
-  res.json(await listByUser(user.sub));
+  const filters = listQuerySchema.safeParse(req.query);
+  if (!filters.success) {
+    res.status(400).json({ error: 'Validation failed', issues: filters.error.issues });
+    return;
+  }
+  res.json(await listByUser(user.sub, filters.data));
+});
+
+// Aggregates for the dashboard overview (optional feature), scoped to the caller.
+capsulesRouter.get('/stats', async (req, res) => {
+  const user = getAuthenticatedUser(req);
+  res.json(await statsByUser(user.sub));
 });
 
 capsulesRouter.post('/', async (req, res) => {

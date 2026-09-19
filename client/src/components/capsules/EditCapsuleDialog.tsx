@@ -18,7 +18,7 @@ import type { Capsule, CapsuleInput } from '@/types/capsule';
 
 interface Props {
   capsule: Capsule;
-  onUpdated: (c: Capsule) => void;
+  onUpdated: () => void;
   onMissing: () => void;
 }
 
@@ -27,8 +27,8 @@ export function EditCapsuleDialog({ capsule, onUpdated, onMissing }: Props) {
 
   async function handleSubmit(input: CapsuleInput) {
     try {
-      const updated = await updateCapsule(capsule.id, input);
-      onUpdated(updated);
+      await updateCapsule(capsule.id, input);
+      onUpdated();
       setOpen(false);
       toast.success('Capsule updated');
     } catch (err) {

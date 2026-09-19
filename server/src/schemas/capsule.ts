@@ -22,3 +22,19 @@ export const capsuleInputSchema = z.strictObject({
 export type CapsuleInput = z.infer<typeof capsuleInputSchema>;
 
 export const idParamSchema = z.coerce.number().int().positive();
+
+// Query parameters for GET /api/capsules — all optional; filtering happens in SQL.
+const boolParam = z
+  .enum(['true', 'false'])
+  .transform((v) => v === 'true')
+  .optional();
+
+export const listQuerySchema = z.object({
+  q: z.string().trim().max(200).optional(),
+  category: z.string().trim().max(100).optional(),
+  usefulness: z.string().trim().max(100).optional(),
+  reviewed: boolParam,
+  improved: boolParam,
+});
+
+export type ListQuery = z.infer<typeof listQuerySchema>;

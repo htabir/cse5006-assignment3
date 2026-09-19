@@ -13,14 +13,14 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { createCapsule } from '@/lib/capsules';
-import type { Capsule, CapsuleInput } from '@/types/capsule';
+import type { CapsuleInput } from '@/types/capsule';
 
-export function CreateCapsuleDialog({ onCreated }: { onCreated: (c: Capsule) => void }) {
+export function CreateCapsuleDialog({ onCreated }: { onCreated: () => void }) {
   const [open, setOpen] = useState(false);
 
   async function handleSubmit(input: CapsuleInput) {
-    const created = await createCapsule(input);
-    onCreated(created);
+    await createCapsule(input);
+    onCreated();
     setOpen(false);
     toast.success('Capsule saved');
   }

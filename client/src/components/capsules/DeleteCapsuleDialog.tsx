@@ -20,7 +20,7 @@ import type { Capsule } from '@/types/capsule';
 
 interface Props {
   capsule: Capsule;
-  onDeleted: (id: number) => void;
+  onDeleted: () => void;
   onMissing: () => void;
 }
 
@@ -31,7 +31,7 @@ export function DeleteCapsuleDialog({ capsule, onDeleted, onMissing }: Props) {
     setDeleting(true);
     try {
       await deleteCapsule(capsule.id);
-      onDeleted(capsule.id);
+      onDeleted();
       toast.success('Capsule deleted');
     } catch (err) {
       if (err instanceof ApiError && err.status === 404) {

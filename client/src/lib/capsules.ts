@@ -1,9 +1,13 @@
 // Assignment §5: the four required capsule routes, called from the React app.
 import { api } from '@/lib/api';
-import type { Capsule, CapsuleInput } from '@/types/capsule';
+import type { Capsule, CapsuleInput, CapsuleStats } from '@/types/capsule';
 
-export function listCapsules() {
-  return api<Capsule[]>('/api/capsules');
+export function listCapsules(queryString = '') {
+  return api<Capsule[]>(`/api/capsules${queryString}`);
+}
+
+export function getCapsuleStats() {
+  return api<CapsuleStats>('/api/capsules/stats');
 }
 
 export function createCapsule(input: CapsuleInput) {

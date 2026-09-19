@@ -1,11 +1,12 @@
-// Overview of all the user's capsules: headline tiles plus three small charts, computed in the
-// browser (no extra API calls). Optional feature — not part of the assessed CRUD.
+// Overview of all the user's capsules: headline tiles plus three small charts, from the
+// server-computed GET /api/capsules/stats. Optional feature — not part of the assessed CRUD.
 import { AlertTriangle, CheckCircle2, ChevronDown, Circle } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { computeStats, percent, type CapsuleStats } from '@/lib/capsuleStats';
-import type { Capsule } from '@/types/capsule';
+import { formatWeek, percent, ratedCount } from '@/lib/capsuleStats';
+import { Skeleton } from '@/components/ui/skeleton';
+import type { CapsuleStats } from '@/types/capsule';
 
 // Single accent hue for magnitude bars (validated for light and dark surfaces).
 const ACCENT = '#6366f1';
@@ -23,10 +24,10 @@ function Tile({ label, value, detail }: { label: string; value: string; detail?:
 }
 
 function CategoryBars({ stats }: { stats: CapsuleStats }) {
-  const max = Math.max(1, ...stats.byCategory.map((c) => c.count));
+  const max = Math.max(1, ...stats.by_category.map((c) => c.count));
   return (
     <ul className="space-y-2" aria-label="Records per category">
-      {stats.byCategory.map((c) => (
+      {stats.by_category.map((c) => (
         <li key={c.label} className="grid grid-cols-[7rem_1fr_2rem] items-center gap-2 text-sm">
           <span className="truncate" title={c.label}>
             {c.label}
@@ -49,10 +50,11 @@ function WeeklyColumns({ stats }: { stats: CapsuleStats }) {
   const width = 240;
   const height = 72;
   const gap = 6;
-  const n = stats.byWeek.length;
+  const weeks = stats.by_week.map((w) => ({ ...w, label: formatWeek(w.week_start) }));
+  const n = weeks.length;
   const colWidth = (width - gap * (n - 1)) / n;
-  const max = Math.max(1, ...stats.byWeek.map((w) => w.count));
-  const summary = stats.byWeek.map((w) => `${w.label}: ${w.count}`).join(', ');
+  const max = Math.max(1, ...weeks.map((w) => w.count));
+  const summary = weeks.map((w) => `${w.label}: ${w.count}`).join(', ');
   return (
     <div>
       <svg
@@ -61,7 +63,7 @@ function WeeklyColumns({ stats }: { stats: CapsuleStats }) {
         aria-labelledby="weekly-title"
       >
         <title id="weekly-title">{`Capsules added per week, last ${n} weeks. ${summary}`}</title>
-        {stats.byWeek.map((w, i) => {
+        {weeks.map((w, i) => {
           const h = w.count === 0 ? 2 : Math.max(4, (w.count / max) * (height - 4));
           const x = i * (colWidth + gap);
           return (
@@ -81,7 +83,7 @@ function WeeklyColumns({ stats }: { stats: CapsuleStats }) {
         })}
       </svg>
       <div className="text-muted-foreground mt-1 flex justify-between text-[11px]">
-        <span>{stats.byWeek[0]?.label}</span>
+        <span>{weeks[0]?.label}</span>
         <span>this week</span>
       </div>
     </div>
@@ -94,11 +96,17 @@ function UsefulnessBar({ stats }: { stats: CapsuleStats }) {
     {
       key: 'needs',
       label: 'Needs Improvement',
-      count: stats.needsImprovement,
+      count: stats.needs_improvement,
       color: STATUS.warning,
       Icon: AlertTriangle,
     },
-    { key: 'unrated', label: 'Unrated', count: stats.unrated, color: STATUS.neutral, Icon: Circle },
+    {
+      key: 'unrated',
+      label: 'Unrated',
+      count: stats.total - ratedCount(stats),
+      color: STATUS.neutral,
+      Icon: Circle,
+    },
   ];
   const total = Math.max(1, stats.total);
   return (
@@ -126,8 +134,7 @@ function UsefulnessBar({ stats }: { stats: CapsuleStats }) {
   );
 }
 
-export function CapsuleOverview({ capsules }: { capsules: Capsule[] }) {
-  const stats = useMemo(() => computeStats(capsules), [capsules]);
+export function CapsuleOverview({ stats }: { stats: CapsuleStats | null }) {
   // Collapsed by default on phones so the records stay near the top.
   const [open, setOpen] = useState(() => window.matchMedia('(min-width: 640px)').matches);
 
@@ -149,7 +156,12 @@ export function CapsuleOverview({ capsules }: { capsules: Capsule[] }) {
           />
         </Button>
       </CardHeader>
-      {open && (
+      {open && !stats && (
+        <CardContent id="capsule-overview">
+          <Skeleton className="h-40 w-full" />
+        </CardContent>
+      )}
+      {open && stats && (
         <CardContent id="capsule-overview" className="grid gap-6 lg:grid-cols-[auto_1fr]">
           <div className="grid grid-cols-2 gap-3 lg:w-72">
             <Tile label="Capsules" value={String(stats.total)} />
@@ -166,7 +178,7 @@ export function CapsuleOverview({ capsules }: { capsules: Capsule[] }) {
             <Tile
               label="Rated good"
               value={String(stats.good)}
-              detail={`${percent(stats.good, stats.rated)} of ${stats.rated} rated`}
+              detail={`${percent(stats.good, ratedCount(stats))} of ${ratedCount(stats)} rated`}
             />
           </div>
           <div className="grid gap-6 sm:grid-cols-2">
