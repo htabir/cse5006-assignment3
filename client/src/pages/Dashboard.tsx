@@ -4,6 +4,8 @@ import { useCallback, useMemo, useState } from 'react';
 import { CapsuleCard } from '@/components/capsules/CapsuleCard';
 import { CapsuleFiltersBar } from '@/components/capsules/CapsuleFilters';
 import { CapsuleOverview } from '@/components/capsules/CapsuleOverview';
+import { CapsuleTable } from '@/components/capsules/CapsuleTable';
+import { ViewToggle } from '@/components/capsules/ViewToggle';
 import { CreateCapsuleDialog } from '@/components/capsules/CreateCapsuleDialog';
 import { DeleteCapsuleDialog } from '@/components/capsules/DeleteCapsuleDialog';
 import { EditCapsuleDialog } from '@/components/capsules/EditCapsuleDialog';
@@ -14,6 +16,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useCapsules } from '@/hooks/useCapsules';
 import { useCapsuleStats } from '@/hooks/useCapsuleStats';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
+import { useViewMode } from '@/hooks/useViewMode';
+import type { Capsule } from '@/types/capsule';
 import {
   EMPTY_FILTERS,
   isFiltering,
@@ -30,6 +34,7 @@ export function Dashboard() {
 
   const { capsules, loading, error, reload } = useCapsules(queryString);
   const { stats, reload: reloadStats } = useCapsuleStats();
+  const [view, setView] = useViewMode();
   const filtering = isFiltering(debouncedFilters);
   const total = stats?.total ?? 0;
 
@@ -38,6 +43,13 @@ export function Dashboard() {
     reload();
     reloadStats();
   }, [reload, reloadStats]);
+
+  const actionsFor = (c: Capsule) => (
+    <>
+      <EditCapsuleDialog capsule={c} onUpdated={onMutated} onMissing={onMutated} />
+      <DeleteCapsuleDialog capsule={c} onDeleted={onMutated} onMissing={onMutated} />
+    </>
+  );
 
   const noRecordsAtAll = !loading && !error && total === 0 && !filtering && capsules.length === 0;
 
@@ -72,7 +84,11 @@ export function Dashboard() {
       ) : (
         <>
           {total > 0 && <CapsuleOverview stats={stats} />}
-          <CapsuleFiltersBar value={filters} onChange={setFilters} />
+          <CapsuleFiltersBar
+            value={filters}
+            onChange={setFilters}
+            trailing={<ViewToggle value={view} onChange={setView} />}
+          />
           {loading ? (
             <div
               className="grid gap-4 sm:grid-cols-2"
@@ -87,23 +103,12 @@ export function Dashboard() {
             <p className="text-muted-foreground py-10 text-center text-sm">
               No capsules match these filters.
             </p>
+          ) : view === 'table' ? (
+            <CapsuleTable capsules={capsules} actions={actionsFor} />
           ) : (
             <div className="grid gap-4 sm:grid-cols-2">
               {capsules.map((c) => (
-                <CapsuleCard
-                  key={c.id}
-                  capsule={c}
-                  actions={
-                    <>
-                      <EditCapsuleDialog capsule={c} onUpdated={onMutated} onMissing={onMutated} />
-                      <DeleteCapsuleDialog
-                        capsule={c}
-                        onDeleted={onMutated}
-                        onMissing={onMutated}
-                      />
-                    </>
-                  }
-                />
+                <CapsuleCard key={c.id} capsule={c} actions={actionsFor(c)} />
               ))}
             </div>
           )}
