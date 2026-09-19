@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react';
 import { CapsuleCard } from '@/components/capsules/CapsuleCard';
 import { CapsuleFiltersBar } from '@/components/capsules/CapsuleFilters';
+import { CapsuleOverview } from '@/components/capsules/CapsuleOverview';
 import { CreateCapsuleDialog } from '@/components/capsules/CreateCapsuleDialog';
 import { DeleteCapsuleDialog } from '@/components/capsules/DeleteCapsuleDialog';
 import { EditCapsuleDialog } from '@/components/capsules/EditCapsuleDialog';
@@ -60,6 +61,7 @@ export function Dashboard() {
         <EmptyState action={<CreateCapsuleDialog onCreated={add} />} />
       ) : (
         <>
+          <CapsuleOverview capsules={capsules} />
           <CapsuleFiltersBar value={filters} onChange={setFilters} />
           {visible.length === 0 ? (
             <p className="text-muted-foreground py-10 text-center text-sm">
